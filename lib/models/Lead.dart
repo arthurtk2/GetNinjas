@@ -1,6 +1,6 @@
 class Lead {
-  final String distance;
-  final String leadPrice;
+  final int distance;
+  final int leadPrice;
   final String title;
   final LeadEmbedded leadEmbedded;
 
@@ -14,23 +14,48 @@ class Lead {
 }
 
 class LeadEmbedded {
-  final Info info;
+  final List<Info> info;
   final User user;
   final Address address;
 
   LeadEmbedded.convertFromJson(Map<String, dynamic> map)
-      : info = Info.convertFromJson(map['info']),
+      : info = parseInfos(map['info']),
         user = User.convertFromJson(map['user']),
         address = Address.convertFromJson(map['address']);
+
+  static List<Info> parseInfos(json) {
+    var list = json as List;
+
+    List<Info> infoList =
+        list.map((data) => Info.convertFromJson(data)).toList();
+
+    return infoList;
+  }
 }
 
 class Info {
   final String label;
-  final String value;
+  final List<String> value;
 
-  Info.convertFromJson(Map<String, dynamic> map)
-      : label = map['label'],
-        value = map['value'];
+  Info({this.label, this.value});
+
+  factory Info.convertFromJson(Map<String, dynamic> map) {
+    List<String> valueArray = [];
+    var valuesFromJson = map['value'];
+
+    if (valuesFromJson is String) {
+      valueArray.add(valuesFromJson);
+    } else if (valueArray is List) {
+      for (var item in valuesFromJson) {
+        valueArray.add(item);
+      }
+    }
+
+    return new Info(
+      label: map['label'],
+      value: valueArray,
+    );
+  }
 }
 
 class User {
@@ -45,32 +70,24 @@ class User {
 }
 
 class UserEmbedded {
-  final UserEmbeddedFones userEmbeddedFones;
+  final List<Number> phones;
 
   UserEmbedded.convertFromJson(Map<String, dynamic> map)
-      : userEmbeddedFones = UserEmbeddedFones.convertFromJson(map['_embedded']);
-}
-
-class UserEmbeddedFones {
-  final List<Phone> phones;
-
-  UserEmbeddedFones.convertFromJson(Map<String, dynamic> map)
       : phones = parsePhones(map['phones']);
 
-  static List<Phone> parsePhones(phonesJson) {
+  static List<Number> parsePhones(phonesJson) {
     var list = phonesJson as List;
 
-    List<Phone> phonesList =
-        list.map((data) => Phone.convertFromJson(data)).toList();
+    List<Number> numberList = list.map((data) => Number.convertFromJson(data)).toList();
 
-    return phonesList;
+    return numberList;
   }
 }
 
-class Phone {
+class Number {
   final String number;
 
-  Phone.convertFromJson(Map<String, dynamic> map) : number = map['number'];
+  Number.convertFromJson(Map<String, dynamic> map) : number = map['number'];
 }
 
 class Address {
@@ -88,8 +105,8 @@ class Address {
 }
 
 class AddressGeolocation {
-  final String latitude;
-  final String longitude;
+  final double latitude;
+  final double longitude;
 
   AddressGeolocation.convertFromJson(Map<String, dynamic> map)
       : longitude = map['longitude'],

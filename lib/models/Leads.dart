@@ -1,3 +1,5 @@
+import 'package:getninjas_mobile_teste/utils/date.dart';
+
 class Leads {
   final List<Lead> leads;
   final Links links;
@@ -11,8 +13,7 @@ class Leads {
   static List<Lead> parseLeads(leadsJson) {
     var list = leadsJson as List;
 
-    List<Lead> leadsList =
-        list.map((data) => Lead.convertFromJson(data)).toList();
+    List<Lead> leadsList = list.map((data) => Lead.convertFromJson(data)).toList();
 
     return leadsList;
   }
@@ -24,7 +25,7 @@ class Lead {
   final Links links;
 
   Lead.convertFromJson(Map<String, dynamic> map)
-      : createdAt = map['created_at'],
+      : createdAt = convertToBr(map['created_at']),
         leadEmbedded = LeadEmbedded.convertFromJson(map['_embedded']),
         links = Links.convertFromJson(map['_links']);
 }

@@ -1,3 +1,5 @@
+import 'package:getninjas_mobile_teste/utils/date.dart';
+
 class Offers {
   final List<Offer> offers;
   final Links links;
@@ -11,7 +13,8 @@ class Offers {
   static List<Offer> parseOffers(offersJson) {
     var list = offersJson as List;
 
-    List<Offer> offersList = list.map((data) => Offer.convertFromJson(data)).toList();
+    List<Offer> offersList =
+        list.map((data) => Offer.convertFromJson(data)).toList();
 
     return offersList;
   }
@@ -40,12 +43,15 @@ class Request {
   final String title;
   final RequestEmbedded requestEmbedded;
 
-  Request(this.createdAt, this.title, this.requestEmbedded);
+  Request({this.createdAt, this.title, this.requestEmbedded});
 
-  Request.convertFromJson(Map<String, dynamic> map)
-      : createdAt = map['created_at'],
-        title = map['title'],
-        requestEmbedded = RequestEmbedded.convertFromJson(map['_embedded']);
+  factory Request.convertFromJson(Map<String, dynamic> map) {
+    return new Request(
+      createdAt: convertToBr(map['created_at']),
+      title: map['title'],
+      requestEmbedded: RequestEmbedded.convertFromJson(map['_embedded']),
+    );
+  }
 }
 
 class RequestEmbedded {
